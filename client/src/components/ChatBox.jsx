@@ -1,30 +1,24 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import io from "socket.io-client";
+
+const socket = io.connect("http://localhost:5000");
 
 function ChatBox() {
-  const [backendData, setBackendData] = useState(null);
-  console.log(backendData);
+  const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    fetch("/api")
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
+  function handleChange(e) {
+    setMessage(e.target.value);
+  }
 
-        setBackendData(data);
-      });
-  }, []);
+  function sendMessage() {
+    socket.emit("send_message", message);
+  }
 
   return (
     <div className="chat-box">
-      <div className="messages">
-        {backendData === null ? (
-          <p>Loading</p>
-        ) : (
-          backendData.map((data, i) => <p key={i}>{data}</p>)
-        )}
-      </div>
-      <input placeholder="message..." />
-      <button> Send Message</button>
+      <div className="messages"></div>
+      <input placeholder="message..." value={message} onChange={handleChange} />
+      <button onClick={sendMessage}> Send Message</button>
     </div>
   );
 }
