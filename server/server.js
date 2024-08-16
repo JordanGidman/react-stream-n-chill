@@ -13,12 +13,15 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+//i need to keep track of the time in the video while it is playing
+let serverTime = 0;
 
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
 
   socket.on("send_message", (data) => {
     console.log(data);
+    socket.broadcast.emit("recieve_message", data);
   });
 });
 
